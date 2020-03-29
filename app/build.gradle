@@ -32,4 +32,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'org.altbeacon:android-beacon-library:2.16.4'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 }

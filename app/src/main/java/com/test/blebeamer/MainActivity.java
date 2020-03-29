@@ -13,23 +13,49 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.test.blebeamer.Utils.Utils;
 
-public class MainActivity extends AppCompatActivity {
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     public static final String CHANNEL_ID = "exampleForegroundServiceChannel";
     private static final int PERMISSION_REQUEST_FINE_LOCATION = 1;
     private static final int PERMISSION_REQUEST_BACKGROUND_LOCATION = 2;
     public static final String sysIdKey = "sharedPrefKey";
+    private BeaconManager beaconManager = BeaconManager.getInstanceForApplication(this);
+    Set<String> remote_beacon_ids_set = new HashSet<String>();
+    ListView nearByBeaconLv = null;
+    ArrayAdapter adapter = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        verifyBluetooth();
+
         TextView myIdView = (TextView) findViewById(R.id.myid);
+        nearByBeaconLv = (ListView) findViewById((R.id.remoteBeacons));
+
         checkPermission();
         String uid = getsystemID();
+        remote_beacon_ids_set.add("My ID : "+ uid);
         myIdView.setText(uid);
         startserviceBroadcast(uid);
     }
@@ -52,6 +78,15 @@ public class MainActivity extends AppCompatActivity {
 
 //        application.enableMonitoring();
         ContextCompat.startForegroundService(this, serviceIntent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        App application = ((App) this.getApplicationContext());
+        beaconManager.bind(this);
+        application.setMonitoringActivity(this);
+        updateLog(application.getLog());
     }
 
     private boolean checkPermission() {
@@ -118,4 +153,92 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
+    private void verifyBluetooth() {
+
+        try {
+            if (!BeaconManager.getInstanceForApplication(this).checkAvailability()) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Bluetooth not enabled");
+                builder.setMessage("Please enable bluetooth in settings and restart this application.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        //finish();
+                        //System.exit(0);
+                    }
+                });
+                builder.show();
+            }
+        }
+        catch (RuntimeException e) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Bluetooth LE not available");
+            builder.setMessage("Sorry, this device does not support Bluetooth LE.");
+            builder.setPositiveButton(android.R.string.ok, null);
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    //finish();
+                    //System.exit(0);
+                }
+
+            });
+            builder.show();
+
+        }
+
+    }
+
+    public void updateLog(final String log) {
+        Log.i("testing_log_adapater",log);
+
+
+    }
+
+    @Override
+    public void onBeaconServiceConnect() {
+
+        RangeNotifier rangeNotifier = new RangeNotifier() {
+            @Override
+            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+                if (beacons.size() > 0) {
+                    Log.d("test_ble", "didRangeBeaconsInRegion called with beacon count:  "+beacons.size());
+                    Beacon firstBeacon = beacons.iterator().next();
+                    String beaconLog = "The first beacon " + firstBeacon.toString() + " is about " + firstBeacon.getDistance() + " meters away.";
+                    Log.d("test_ble_bleadd",firstBeacon.getBluetoothAddress());
+                    Log.d("test_ble_blename", ""+ String.valueOf(firstBeacon.getBluetoothName()));
+                    Log.d("test_ble_bleManufa",String.valueOf(firstBeacon.getManufacturer()));
+                    Log.d("test_ble_serUUID",String.valueOf(firstBeacon.getServiceUuid()));
+                    Log.d("test_ble_beacontype",String.valueOf(firstBeacon.getBeaconTypeCode()));
+                    Log.d("test_ble_Id1",String.valueOf(firstBeacon.getId1()));
+                    String beaconID = String.valueOf(firstBeacon.getId1());
+                    remote_beacon_ids_set.add( "Remote beacon : "+ beaconID.substring(2,beaconID.length()) );
+
+//                    logToDisplay("The first beacon " + firstBeacon.toString() + " is about " + firstBeacon.getDistance() + " meters away.");
+                    Log.d("test_ble",beaconLog);
+
+                    String[] nearByBeaconsArray = remote_beacon_ids_set.toArray(new String[0]);
+                    Arrays.sort( nearByBeaconsArray );
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_2, android.R.id.text1, nearByBeaconsArray);
+
+                    nearByBeaconLv.setAdapter(adapter);
+                }
+            }
+
+        };
+        try {
+            beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+            beaconManager.addRangeNotifier(rangeNotifier);
+            beaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
+            beaconManager.addRangeNotifier(rangeNotifier);
+        } catch (RemoteException e) {   }
+    }
+
+
 }
+
+
