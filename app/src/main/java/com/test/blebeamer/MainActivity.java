@@ -195,11 +195,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
                     Log.d("test_ble", "didRangeBeaconsInRegion called with beacon count:  "+beacons.size());
                     Beacon firstBeacon = beacons.iterator().next();
                     String beaconLog = "The first beacon " + firstBeacon.toString() + " is about " + firstBeacon.getDistance() + " meters away.";
-                    Log.d("test_ble_bleadd",firstBeacon.getBluetoothAddress());
-                    Log.d("test_ble_blename", ""+ String.valueOf(firstBeacon.getBluetoothName()));
-                    Log.d("test_ble_bleManufa",String.valueOf(firstBeacon.getManufacturer()));
-                    Log.d("test_ble_serUUID",String.valueOf(firstBeacon.getServiceUuid()));
-                    Log.d("test_ble_beacontype",String.valueOf(firstBeacon.getBeaconTypeCode()));
                     Log.d("test_ble_Id1",String.valueOf(firstBeacon.getId1()));
                     String beaconID = String.valueOf(firstBeacon.getId1());
                     remote_beacon_ids_set.add( "Remote beacon : "+ beaconID.substring(2,beaconID.length()) );
@@ -209,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
 
                     String[] nearByBeaconsArray = remote_beacon_ids_set.toArray(new String[0]);
                     Arrays.sort( nearByBeaconsArray );
+                    Log.d("totalnearbybeacons",""+ String.valueOf(nearByBeaconsArray.length-1));
 
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_2, android.R.id.text1, nearByBeaconsArray);
 

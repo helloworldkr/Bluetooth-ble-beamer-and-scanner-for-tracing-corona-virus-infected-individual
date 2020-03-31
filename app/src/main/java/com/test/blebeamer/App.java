@@ -63,10 +63,10 @@ public class App extends Application implements BootstrapNotifier {
         beaconManager.setEnableScheduledScanJobs(false);
 //        beaconManager.setBackgroundBetweenScanPeriod(0);
 
-        beaconManager.setBackgroundScanPeriod(1100);
-        beaconManager.setBackgroundBetweenScanPeriod(5000l);
+        beaconManager.setBackgroundScanPeriod(200);
+        beaconManager.setBackgroundBetweenScanPeriod(200l);
 
-        beaconManager.setForegroundScanPeriod(200);
+        beaconManager.setForegroundScanPeriod(100);
 //        beaconManager.setForegroundBetweenScanPeriod(0);
 
 
