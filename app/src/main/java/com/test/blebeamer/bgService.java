@@ -3,13 +3,8 @@ package com.test.blebeamer;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseSettings;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
@@ -18,13 +13,13 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.test.blebeamer.broadcastReceiver.PowerButtonBroadcastReceiver;
+
 import org.altbeacon.beacon.Beacon;
-import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.BeaconTransmitter;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static com.test.blebeamer.MainActivity.CHANNEL_ID;
 //import static com.wildanka.learnforegroundservice.App.CHANNEL_ID;
@@ -32,7 +27,7 @@ import static com.test.blebeamer.MainActivity.CHANNEL_ID;
 //import android.support.annotation.Nullable;
 //import android.support.v4.app.NotificationCompat;
 
-public class ExampleService extends Service {
+public class bgService extends Service {
 
     @Override
     public void onCreate() {

@@ -27,10 +27,8 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer {
     }
 
     private void startserviceBroadcast(String uid) {
-        Intent serviceIntent = new Intent(this,ExampleService.class);
+        Intent serviceIntent = new Intent(this, bgService.class);
         serviceIntent.putExtra(sysIdKey, uid);
 
 //        application.enableMonitoring();

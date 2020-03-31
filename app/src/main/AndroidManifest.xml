@@ -33,11 +33,11 @@
         </activity>
 
         <!--region SERVICE-->
-        <service android:name=".ExampleService"/>
+        <service android:name=".bgService"/>
         <!--        <receiver android:name=".PowerButtonBroadcastReceiver"></receiver>-->
         <!--endregion SERVICE-->
 
-        <receiver android:name=".PowerButtonBroadcastReceiver"
+        <receiver android:name=".broadcastReceiver.PowerButtonBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SCREEN_OFF"/>

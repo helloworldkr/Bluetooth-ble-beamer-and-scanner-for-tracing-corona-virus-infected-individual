@@ -39,7 +39,7 @@ public class App extends Application implements BootstrapNotifier {
         beaconManager.getBeaconParsers().add(new BeaconParser().
                 setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
 
-//        beaconManager.setDebug(true);
+        beaconManager.setDebug(true);
 
         Notification.Builder builder = new Notification.Builder(this);
         builder.setSmallIcon(R.drawable.ic_launcher_background);
@@ -60,10 +60,14 @@ public class App extends Application implements BootstrapNotifier {
         }
         beaconManager.enableForegroundServiceScanning(builder.build(), 456);
 
-
         beaconManager.setEnableScheduledScanJobs(false);
-        beaconManager.setBackgroundBetweenScanPeriod(0);
+//        beaconManager.setBackgroundBetweenScanPeriod(0);
+
         beaconManager.setBackgroundScanPeriod(1100);
+        beaconManager.setBackgroundBetweenScanPeriod(5000l);
+
+        beaconManager.setForegroundScanPeriod(200);
+//        beaconManager.setForegroundBetweenScanPeriod(0);
 
 
         Region region = new Region("backgroundRegion",
@@ -73,6 +77,7 @@ public class App extends Application implements BootstrapNotifier {
         // simply constructing this class and holding a reference to it in your custom Application
         // class will automatically cause the BeaconLibrary to save battery whenever the application
         // is not visible.  This reduces bluetooth power usage by about 60%
+
         backgroundPowerSaver = new BackgroundPowerSaver(this);
 
         createNotificationChannel();

@@ -1,4 +1,4 @@
-package com.test.blebeamer;
+package com.test.blebeamer.broadcastReceiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
